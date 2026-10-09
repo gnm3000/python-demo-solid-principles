@@ -1,9 +1,9 @@
 """The classes in domain.py are SOLID, but THIS code that uses them is a design mess.
 
-Run: uv run python -m demo_1.bad_usage
+Run: uv run python -m solid_demo.bad_usage
 """
-from demo_1.domain import NoDiscount, Order, OrderService, PercentageDiscount
-from demo_1.infra import ConsoleNotifier, InMemoryOrderRepository
+from solid_demo.domain import NoDiscount, Order, OrderService, PercentageDiscount
+from solid_demo.infra import ConsoleNotifier, InMemoryOrderRepository
 
 # Anti-pattern 1: shared global mutable state.
 repo = InMemoryOrderRepository()
@@ -39,8 +39,12 @@ def process(customer_type, email, items):
     return result
 
 
-if __name__ == "__main__":
+def main() -> None:
     process("vip", "ana@x.com", [("keyboard", 100.0), ("mouse", 50.0)])
     process("employee", "luis@x.com", [("monitor", 300.0)])
     process("regular", "eva@x.com", [("cable", 10.0)])
     process("vpi", "typo@x.com", [("cable", 10.0)])  # typo in string: silently falls back to NoDiscount
+
+
+if __name__ == "__main__":
+    main()

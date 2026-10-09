@@ -1,12 +1,12 @@
 """Same SOLID classes from domain.py, but used with good patterns.
 
-Run: uv run python -m demo_1.good_usage
+Run: uv run python -m solid_demo.good_usage
 """
 from dataclasses import dataclass
 from enum import Enum
 
-from demo_1.domain import DiscountPolicy, NoDiscount, Order, OrderService, PercentageDiscount
-from demo_1.infra import ConsoleNotifier, InMemoryOrderRepository
+from solid_demo.domain import DiscountPolicy, NoDiscount, Order, OrderService, PercentageDiscount
+from solid_demo.infra import ConsoleNotifier, InMemoryOrderRepository
 
 
 # Improvement 1: strong types at the boundary (Enum instead of free-form strings).

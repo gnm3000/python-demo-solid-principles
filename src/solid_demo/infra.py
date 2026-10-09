@@ -1,5 +1,5 @@
 """Concrete implementations (interchangeable thanks to LSP)."""
-from demo_1.domain import Order
+from solid_demo.domain import Order
 
 
 class InMemoryOrderRepository:

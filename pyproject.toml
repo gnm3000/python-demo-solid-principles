@@ -1,5 +1,5 @@
 [project]
-name = "demo-1"
+name = "solid-good-vs-bad-usage"
 version = "0.1.0"
 description = "Educational demo: SOLID classes used with good vs. bad design patterns"
 readme = "README.md"
@@ -7,8 +7,12 @@ requires-python = ">=3.13"
 dependencies = []
 
 [project.scripts]
-demo-1 = "demo_1:main"
+solid-demo-good = "solid_demo.good_usage:main"
+solid-demo-bad = "solid_demo.bad_usage:main"
 
 [build-system]
 requires = ["uv_build>=0.12.3,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "solid_demo"

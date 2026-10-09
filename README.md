@@ -1,4 +1,4 @@
-# demo-1: SOLID classes, good vs. bad usage
+# solid-good-vs-bad-usage
 
 A small Python demo showing that **well-designed classes are not enough**.
 The classes in `domain.py` follow SOLID, but the code that *uses* them can still
@@ -7,7 +7,7 @@ be fragile if it ignores good design patterns and data-flow practices.
 ## Project structure
 
 ```
-src/demo_1/
+src/solid_demo/
 ├── domain.py       # SOLID classes: Order, OrderService, discount policies, Protocols
 ├── infra.py        # Concrete implementations: in-memory repository, console notifier
 ├── bad_usage.py    # Same classes, used with anti-patterns
@@ -39,17 +39,92 @@ src/demo_1/
 - Python 3.13+
 - [uv](https://docs.astral.sh/uv/)
 
+## Class diagram
+
+```mermaid
+classDiagram
+    class Order {
+        +str customer_email
+        +dict items
+        +float total
+        +add_item(name, price)
+    }
+    class DiscountPolicy {
+        <<Protocol>>
+        +apply(subtotal) float
+    }
+    class OrderRepository {
+        <<Protocol>>
+        +save(order)
+    }
+    class Notifier {
+        <<Protocol>>
+        +send(to, message)
+    }
+    class NoDiscount
+    class PercentageDiscount
+    class InMemoryOrderRepository
+    class ConsoleNotifier
+    class OrderService {
+        +checkout(order) Order
+    }
+
+    DiscountPolicy <|.. NoDiscount
+    DiscountPolicy <|.. PercentageDiscount
+    OrderRepository <|.. InMemoryOrderRepository
+    Notifier <|.. ConsoleNotifier
+    OrderService --> DiscountPolicy : depends on
+    OrderService --> OrderRepository : depends on
+    OrderService --> Notifier : depends on
+    OrderService ..> Order : processes
+```
+
 ## Run
 
 From the project root:
 
 ```bash
 # Good usage
-uv run python -m demo_1.good_usage
+uv run solid-demo-good
 
 # Bad usage
-uv run python -m demo_1.bad_usage
+uv run solid-demo-bad
 
 # Compare side by side
-uv run python -m demo_1.bad_usage && echo "-----" && uv run python -m demo_1.good_usage
+uv run solid-demo-bad && echo "-----" && uv run solid-demo-good
 ```
+
+You can also run the modules directly:
+
+```bash
+uv run python -m solid_demo.good_usage
+uv run python -m solid_demo.bad_usage
+```
+
+## Example output
+
+Good usage (`uv run solid-demo-good`):
+
+```console
+$ uv run solid-demo-good
+[email -> ana@x.com] Order confirmed: $120.00
+[email -> luis@x.com] Order confirmed: $210.00
+[rejected] Unknown customer type: 'vpi'
+[rejected] Invalid price for 'cable': -5.0
+Saved orders: 2
+```
+
+Bad usage (`uv run solid-demo-bad`):
+
+```console
+$ uv run solid-demo-bad
+[email -> ana@x.com] Order confirmed: $120.00
+   (discount applied, saved: 1 )
+[email -> luis@x.com] Order confirmed: $210.00
+   (discount applied, saved: 2 )
+[email -> eva@x.com] Order confirmed: $10.00
+[email -> typo@x.com] Order confirmed: $10.00
+```
+
+Note how the bad version silently accepts the `"vpi"` typo and charges the full
+price, while the good version rejects it (and the negative price) with a clear error.
